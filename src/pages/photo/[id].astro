@@ -1,0 +1,158 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getPhotos, accession, slug } from '../../lib/photos';
+
+export async function getStaticPaths() {
+  const photos = await getPhotos();
+  return photos.map((photo, i) => ({
+    params: { id: photo.id },
+    props: {
+      photo,
+      index: i,
+      prev: photos[i - 1] ?? null,
+      next: photos[i + 1] ?? null,
+    },
+  }));
+}
+
+const { photo, index, prev, next } = Astro.props;
+const d = photo.data;
+const dateLabel = d.date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+const exifRows = d.exif
+  ? Object.entries(d.exif).filter(([, v]) => v != null)
+  : [];
+---
+
+<Base title={`${accession(index)} — The Archive`} description={d.caption}>
+  <article class="detail">
+    <div class="stage">
+      <img
+        src={d.src}
+        alt={d.title ?? d.location?.place ?? 'Archive photograph'}
+        width={d.width}
+        height={d.height}
+      />
+    </div>
+
+    <aside class="sheet">
+      <span class="accession big">{accession(index)}</span>
+      {d.title && <h1>{d.title}</h1>}
+      {d.caption && <p class="caption prose">{d.caption}</p>}
+
+      <dl class="facts">
+        <dt>Date</dt>
+        <dd>{dateLabel}</dd>
+        {
+          d.location?.place && (
+            <>
+              <dt>Location</dt>
+              <dd>{d.location.place}</dd>
+            </>
+          )
+        }
+        {
+          exifRows.map(([k, v]) => (
+            <>
+              <dt>{k}</dt>
+              <dd>{String(v)}</dd>
+            </>
+          ))
+        }
+      </dl>
+
+      {
+        d.tags.length > 0 && (
+          <div class="tags">
+            {d.tags.map((t) => (
+              <a href={`/tags/${slug(t)}`} class="tag">
+                {t}
+              </a>
+            ))}
+          </div>
+        )
+      }
+
+      <nav class="pager">
+        {prev ? (
+          <a href={`/photo/${prev.id}`} rel="prev">← Prev</a>
+        ) : (
+          <span class="disabled">← Prev</span>
+        )}
+        {next ? (
+          <a href={`/photo/${next.id}`} rel="next">Next →</a>
+        ) : (
+          <span class="disabled">Next →</span>
+        )}
+      </nav>
+    </aside>
+  </article>
+
+  <style>
+    .detail {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 320px;
+      gap: 3rem;
+      align-items: start;
+    }
+    @media (max-width: 860px) {
+      .detail { grid-template-columns: 1fr; }
+    }
+    .stage {
+      background: var(--canvas-raised);
+      display: grid;
+      place-items: center;
+    }
+    .stage img {
+      max-height: 82vh;
+      width: auto;
+      object-fit: contain;
+    }
+    .sheet { position: sticky; top: 2rem; }
+    .accession.big {
+      font-size: 0.9rem;
+      color: var(--signal);
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+    h1 {
+      font-family: var(--font-display);
+      font-weight: 400;
+      font-size: 1.9rem;
+      margin: 0 0 0.75rem;
+    }
+    .caption { color: var(--ink-dim); font-size: 0.95rem; }
+    .facts {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 0.5rem 1.25rem;
+      margin: 2rem 0;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+    .facts dt { color: var(--ink-faint); text-transform: capitalize; }
+    .facts dd { margin: 0; color: var(--ink); }
+    .tags { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.72rem;
+      color: var(--ink-dim);
+      border: 1px solid var(--ink-faint);
+      padding: 0.2rem 0.6rem;
+    }
+    .tag:hover { color: var(--signal); border-color: var(--signal); }
+    .pager {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--ink-faint);
+      padding-top: 1rem;
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+    }
+    .pager a:hover { color: var(--signal); }
+    .pager .disabled { color: var(--ink-faint); }
+  </style>
+</Base>

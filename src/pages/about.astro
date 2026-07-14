@@ -1,0 +1,27 @@
+---
+import Base from '../layouts/Base.astro';
+import SectionHead from '../components/SectionHead.astro';
+---
+
+<Base title="The Archive — About">
+  <SectionHead eyebrow="Colophon" title="About this archive" />
+  <div class="prose body">
+    <p>
+      A working archive of photographs, catalogued by date, place, and subject.
+      Every frame carries an accession number and whatever the camera recorded
+      about how it was made.
+    </p>
+    <p>
+      Built as a static site — images are optimized at build time, and the
+      whole thing serves from a CDN. Replace this copy with your own.
+    </p>
+  </div>
+
+  <style>
+    .body {
+      font-size: 1.05rem;
+      color: var(--ink-dim);
+    }
+    .body p { margin-bottom: 1.25rem; }
+  </style>
+</Base>

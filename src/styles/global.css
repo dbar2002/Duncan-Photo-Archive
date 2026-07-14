@@ -1,0 +1,69 @@
+/* ── Design tokens ───────────────────────────────────────────────
+   A photo archive should recede. Near-black canvas, one warm off-white
+   for text, a single muted signal color, and a monospace utility face
+   for the accession labels that give the archive its voice.            */
+:root {
+  --ink: #ece9e2;          /* warm off-white text          */
+  --ink-dim: #8a877f;      /* captions, metadata           */
+  --ink-faint: #4a4842;    /* hairlines, disabled          */
+  --canvas: #0f0f0e;       /* near-black background        */
+  --canvas-raised: #1a1a18;/* cards, hovers                */
+  --signal: #c8a45c;       /* brass — the one accent       */
+
+  --font-display: 'Georgia', 'Times New Roman', serif;
+  --font-body: system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'SFMono-Regular', 'JetBrains Mono', 'Consolas', monospace;
+
+  --gutter: clamp(1rem, 4vw, 3rem);
+  --measure: 68ch;
+}
+
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: inherit; text-decoration: none; }
+img { display: block; max-width: 100%; height: auto; }
+
+/* Accession label — the signature device. A museum tag, in monospace. */
+.accession {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+
+/* Focus is always visible for keyboard users. */
+:focus-visible {
+  outline: 2px solid var(--signal);
+  outline-offset: 3px;
+}
+
+.site {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+/* Utility for content-width prose blocks (about page, captions). */
+.prose { max-width: var(--measure); }

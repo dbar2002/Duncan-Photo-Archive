@@ -1,0 +1,80 @@
+---
+import Base from '../../layouts/Base.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { getCollections, getTags, slug } from '../../lib/photos';
+
+const collections = await getCollections();
+const tags = await getTags();
+---
+
+<Base title="The Archive — Collections">
+  <SectionHead
+    eyebrow="Curated groupings"
+    title="Collections"
+    count={collections.length}
+  />
+
+  <ul class="collections">
+    {
+      collections.map((c) => (
+        <li>
+          <a href={`/collections/${slug(c.name)}`}>
+            <span class="name">{c.name}</span>
+            <span class="accession">{c.count}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+
+  {
+    tags.length > 0 && (
+      <section class="tags">
+        <span class="accession">Tags</span>
+        <div class="tag-cloud">
+          {tags.map((t) => (
+            <a href={`/tags/${slug(t.tag)}`} class="tag">
+              {t.tag}
+              <sup>{t.count}</sup>
+            </a>
+          ))}
+        </div>
+      </section>
+    )
+  }
+
+  <style>
+    .collections {
+      list-style: none;
+      margin: 0 0 4rem;
+      padding: 0;
+      border-top: 1px solid var(--ink-faint);
+    }
+    .collections a {
+      display: flex;
+      align-items: baseline;
+      justify-content: space-between;
+      padding: 1.1rem 0;
+      border-bottom: 1px solid var(--ink-faint);
+      font-family: var(--font-display);
+      font-size: 1.4rem;
+      transition: color 0.2s, padding-left 0.2s;
+    }
+    .collections a:hover {
+      color: var(--signal);
+      padding-left: 0.5rem;
+    }
+    .tags .accession { display: block; margin-bottom: 1rem; }
+    .tag-cloud { display: flex; flex-wrap: wrap; gap: 0.6rem; }
+    .tag {
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      color: var(--ink-dim);
+      border: 1px solid var(--ink-faint);
+      padding: 0.3rem 0.7rem;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .tag:hover { color: var(--signal); border-color: var(--signal); }
+    .tag sup { color: var(--ink-faint); margin-left: 0.2rem; }
+  </style>
+</Base>

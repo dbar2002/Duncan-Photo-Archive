@@ -1,0 +1,29 @@
+---
+import type { Photo } from '../lib/photos';
+import PhotoTile from './PhotoTile.astro';
+
+interface Props {
+  photos: Photo[];
+  // Offset so accession numbers stay stable across paginated/filtered views.
+  startIndex?: number;
+}
+const { photos, startIndex = 0 } = Astro.props;
+---
+
+<section class="gallery">
+  {photos.map((photo, i) => <PhotoTile photo={photo} index={startIndex + i} />)}
+</section>
+
+<style>
+  /* CSS columns give a true masonry flow with zero JS. */
+  .gallery {
+    column-count: 3;
+    column-gap: 1.5rem;
+  }
+  @media (max-width: 900px) {
+    .gallery { column-count: 2; }
+  }
+  @media (max-width: 560px) {
+    .gallery { column-count: 1; }
+  }
+</style>

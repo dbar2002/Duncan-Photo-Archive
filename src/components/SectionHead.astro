@@ -1,0 +1,32 @@
+---
+interface Props {
+  eyebrow?: string;
+  title: string;
+  count?: number;
+}
+const { eyebrow, title, count } = Astro.props;
+---
+
+<header class="head">
+  {eyebrow && <span class="accession">{eyebrow}</span>}
+  <h1>{title}</h1>
+  {count !== undefined && <span class="count accession">{count} frames</span>}
+</header>
+
+<style>
+  .head {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 2.5rem;
+  }
+  h1 {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(2rem, 5vw, 3.25rem);
+    line-height: 1.05;
+    margin: 0;
+    letter-spacing: -0.01em;
+  }
+  .count { color: var(--ink-dim); }
+</style>

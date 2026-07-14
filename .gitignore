@@ -1,0 +1,37 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# reverse_geocoder cache (downloaded dataset, regenerated on first run)
+rg_cities1000.csv
+
+# environment / secrets
+.env
+.env.*
+!.env.example
+
+# logs
+*.log
+npm-debug.log*
+
+# os
+.DS_Store
+Thumbs.db
+
+# editors
+.vscode/
+.idea/
+*.swp
+
+public/images/originals/*
+!public/images/originals/.gitkeep

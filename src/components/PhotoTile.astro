@@ -1,0 +1,77 @@
+---
+import type { Photo } from '../lib/photos';
+import { accession } from '../lib/photos';
+
+interface Props {
+  photo: Photo;
+  index: number;
+}
+const { photo, index } = Astro.props;
+const { src, title, date, location, width, height } = photo.data;
+const ratio = width && height ? width / height : undefined;
+const dateLabel = date.toLocaleDateString('en-US', {
+  year: 'numeric',
+  month: 'short',
+});
+---
+
+<a
+  href={`/photo/${photo.id}`}
+  class="tile"
+  style={ratio ? `--ratio: ${ratio};` : undefined}
+  data-src={src}
+  data-title={title ?? ''}
+>
+  <div class="frame">
+    <img
+      src={src}
+      alt={title ?? location?.place ?? 'Archive photograph'}
+      loading="lazy"
+      decoding="async"
+      width={width}
+      height={height}
+    />
+  </div>
+  <div class="meta">
+    <span class="accession">{accession(index)}</span>
+    <span class="date">{dateLabel}</span>
+  </div>
+</a>
+
+<style>
+  .tile {
+    display: block;
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+    group: tile;
+  }
+  .frame {
+    position: relative;
+    aspect-ratio: var(--ratio, 3 / 2);
+    background: var(--canvas-raised);
+    overflow: hidden;
+  }
+  .frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.6s cubic-bezier(0.2, 0, 0, 1),
+      filter 0.4s;
+    filter: grayscale(0.15) contrast(1.02);
+  }
+  .tile:hover .frame img,
+  .tile:focus-visible .frame img {
+    transform: scale(1.03);
+    filter: grayscale(0) contrast(1.05);
+  }
+  .meta {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 0.6rem;
+  }
+  .date {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--ink-dim);
+  }
+</style>

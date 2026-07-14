@@ -1,0 +1,104 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+}
+const { title, description = 'A photographic archive.' } = Astro.props;
+const nav = [
+  { href: '/', label: 'Index' },
+  { href: '/timeline', label: 'Timeline' },
+  { href: '/map', label: 'Map' },
+  { href: '/collections', label: 'Collections' },
+  { href: '/about', label: 'About' },
+];
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  </head>
+  <body>
+    <div class="site">
+      <header class="masthead">
+        <a href="/" class="wordmark">
+          The Archive
+          <span class="accession">Est. MMXXV</span>
+        </a>
+        <nav aria-label="Primary">
+          {
+            nav.map((item) => (
+              <a
+                href={item.href}
+                class="navlink"
+                aria-current={path === item.href ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            ))
+          }
+        </nav>
+      </header>
+
+      <main>
+        <slot />
+      </main>
+
+      <footer class="colophon">
+        <span class="accession">© {new Date().getFullYear()} — All frames reserved</span>
+      </footer>
+    </div>
+
+    <style>
+      .masthead {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 1rem;
+        padding: 2rem 0 1.5rem;
+        border-bottom: 1px solid var(--ink-faint);
+      }
+      .wordmark {
+        font-family: var(--font-display);
+        font-size: 1.5rem;
+        letter-spacing: 0.02em;
+        display: inline-flex;
+        align-items: baseline;
+        gap: 0.75rem;
+      }
+      nav {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+      }
+      .navlink {
+        font-family: var(--font-mono);
+        font-size: 0.78rem;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--ink-dim);
+        padding-bottom: 2px;
+        border-bottom: 1px solid transparent;
+        transition: color 0.2s, border-color 0.2s;
+      }
+      .navlink:hover { color: var(--ink); }
+      .navlink[aria-current='page'] {
+        color: var(--signal);
+        border-color: var(--signal);
+      }
+      main { padding: 3rem 0 5rem; }
+      .colophon {
+        padding: 2rem 0;
+        border-top: 1px solid var(--ink-faint);
+      }
+    </style>
+  </body>
+</html>

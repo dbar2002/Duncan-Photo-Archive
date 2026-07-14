@@ -1,0 +1,35 @@
+---
+import Base from '../../layouts/Base.astro';
+import Gallery from '../../components/Gallery.astro';
+import SectionHead from '../../components/SectionHead.astro';
+import { getPhotos, getTags, slug } from '../../lib/photos';
+
+export async function getStaticPaths() {
+  const tags = await getTags();
+  const photos = await getPhotos();
+  return tags.map((t) => ({
+    params: { tag: slug(t.tag) },
+    props: {
+      name: t.tag,
+      photos: photos.filter((p) => p.data.tags.includes(t.tag)),
+    },
+  }));
+}
+
+const { name, photos } = Astro.props;
+---
+
+<Base title={`The Archive — #${name}`}>
+  <SectionHead eyebrow="Tag" title={name} count={photos.length} />
+  <Gallery photos={photos} />
+  <a href="/collections" class="back accession">← All tags</a>
+
+  <style>
+    .back {
+      display: inline-block;
+      margin-top: 2.5rem;
+      color: var(--ink-dim);
+    }
+    .back:hover { color: var(--signal); }
+  </style>
+</Base>
